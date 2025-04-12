@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "delta-athlete-445608-f2",
+  "private_key_id": "b3c5f2ee0fecb66265a50b9a7f0acf755e315457",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDzE0w05ZCCQHe4\ne++hODy+VZsrTEUY3d7W8pXJu3hAV6/PWxmQ6f67JuKHm4/CBQp4bq1ZNUQ26Z2+\nSKmkF0vtfdpBOwVPMAOyqNL4MvZwuEf5LwCw+zUaOdsbtjBU6vlX/T/oJl5kkTST\nlbIy18USntUWMeivrtt8pBMW4p/MtQSfP8ajZyD8v+16BNYgnBq9dCm/cRILH7gW\nUx8a6fX8gBULf6kbFWwzO50i4jE/Ju8k7TWjZhYUXEuXckWQJ69j9RSgtFIHrq3D\ncCGkQYaLUVYlHSrsM/dljLS1s2mfmp5AX6VjtLlpidDb1ukM5gikPO1u8fihLE7M\nrn3snMpTAgMBAAECggEAW2FGVV51+Jl+yHKDMAMhxtYM6vaVxVbnhrwUto2NE/dD\nBztyvYlSM45XO+6t2R0nBgZpka9WMSSbIiVT7PW7HBGjgsFK6i2dPkV8ZkVWYyLM\nH+/dHSubF3xnlB/mRI4/ZaY1p7MA6mKyNsdggf+evTTL27ewh5c/OTi/Wmug8oXh\nGZL+pc6HI5CxvRu951Kg5zh7TJHS3clCaFlNV1sfbHbeep4uvjLqymVun4R8BBon\nGHXIp/i4QJhsEtFCe5oJB8vK8MadJqI3rBxJEaeaN/p+z9YaM8r8wEyEnZtuUkSt\nstpUXyF+amvGP41QHoW/cR+VALPS0IVWo/lDnE0UHQKBgQD+jxeA7yywZ+ejvgNm\nRavPEzZlslyjtvzZHsCtKwi1oHmNV3AxAKlEYmVTszUJTVwHaooaMms60Wa/OVFk\n0ZT+OUpm9/d169kKRwl/BhPRb9KnBLPN8KukorXqvxWz3EQdAtSxYW7cQHHkL7ix\nap9yIvWOfI7tUyu381qAXY4n7QKBgQD0c5BWcghgzAq0oA4PvFfPaj29WTymEXfp\nTf6FhuiYPijh2QNdj73neTh9JAVWCAmJvkuXh3jHVDiw52q0pdvPTnmLK/tNonJr\nkK8WZCu+s8yLI+oDy50unTt/AkzEeWHiCh0oaiOu7u9XjXG0XCUz/Lw3wWbjdpuA\ngs5W9EfzPwKBgQCtwIPdeON7AWEl7eOqIjIUZNvDbIw5HwTVOl1vlakbOA7fv+gP\nOpFO4Q6io/a2g7wmP71GBlYUzqugKIJ7G2bkY7x6LhUVw0bg8f30WvSaBwa1A8uq\n7PRrqrgbJBSvMNC5MJ52+LdP1RkoFL6vMsTkhiIwAKsaKKP1qkCCz9jhPQKBgGC2\n7C9XdHsfn0ixXn7ZTICSjxTAHp+xn5idtAqOQq4hQbmBS7STr1XKfw/71WShT2zA\n7lVoUt/CMZ/EH1KToHDXonzujMG9eLmYB727KheMOWv/bJHN2EVeDfEFLuw4/gIZ\ncEnSHIYUoHsqSgdKwalc3/bLPPLXtVRV7F84zNKvAoGBAKUWkf9GQsdJ1GFCRzsm\n6NX9WLd1VGK+t6DLLlAZj5ulMhfyWbUFLSjRYx/rDAakoep/0SpDVvUkvctKikXW\nUSGTdsCjUDH042r4hkU5pBmrq6OE/bWFs6QK0WDwAGgTFd+NSVWhhg3HLHsfUHoq\naYs0HJ0eb/EgyQE5O0zoVLsi\n-----END PRIVATE KEY-----\n",
+  "client_email": "xgamechanger-uploader@delta-athlete-445608-f2.iam.gserviceaccount.com",
+  "client_id": "114705479268928267861",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/xgamechanger-uploader%40delta-athlete-445608-f2.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

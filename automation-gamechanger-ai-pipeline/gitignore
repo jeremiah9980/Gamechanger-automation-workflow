@@ -1,0 +1,12 @@
+
+__pycache__/
+*.pyc
+*.log
+.env
+*.sqlite3
+.vscode/
+.idea/
+chrome-data/
+raw_stats/
+summary_csv/
+videos/

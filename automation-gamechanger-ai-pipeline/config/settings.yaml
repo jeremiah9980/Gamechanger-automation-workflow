@@ -1,0 +1,26 @@
+
+# GameChanger Team Configuration
+team_id: "YOUR_TEAM_ID"
+start_date: "2024-01-01"
+end_date: "2024-12-31"
+
+# Google Cloud Storage
+gcs_bucket_name: "your-team-gcs-bucket"
+gcs_upload_folder: "processed-game-videos"  
+
+# Email Notification (Optional)
+email:
+  enabled: true
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  sender: "your_email@gmail.com"
+  recipient: "recipient_email@gmail.com"
+  subject: "GameChanger Video Processing Complete"
+  username: "your_email@gmail.com"
+  password_env_var: "EMAIL_PASSWORD"  # Use env var for security
+
+# Paths
+raw_video_dir: "videos/raw"
+processed_video_dir: "videos/processed"
+playbyplay_json_dir: "raw_stats"
+playbyplay_csv_dir: "summary_csv"
