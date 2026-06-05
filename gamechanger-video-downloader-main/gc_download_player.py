@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-gc_download_player.py  (API Edition v3)
-========================================
+gc_download_player.py  (API Direct Edition v6)
+===============================================
 Downloads GameChanger clips by calling the clips/search/v2 API directly.
 Captures gc-token, gc-device-id, and x-aws-waf-token from the browser session,
 then uses httpx to enumerate clips per game and download via CloudFront.
