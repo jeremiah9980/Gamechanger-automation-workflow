@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GC Manifest Builder</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #ebebea;
+    --text: #1a1a18; --text2: #5a5a57; --text3: #8a8a87;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --info-bg: #e6f1fb; --info-text: #185fa5; --info-border: #b5d4f4;
+    --success-bg: #eaf3de; --success-text: #3b6d11;
+    --danger-bg: #fcebeb; --danger-text: #a32d2d;
+    --radius: 8px; --radius-lg: 12px;
+    --mono: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    --sans: system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1c; --bg2: #2a2a28; --bg3: #333331;
+      --text: #f0f0ee; --text2: #b0b0ae; --text3: #707070;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+      --info-bg: #0c2a4a; --info-text: #85b7eb; --info-border: #185fa5;
+      --success-bg: #173404; --success-text: #97c459;
+      --danger-bg: #2a0f0f; --danger-text: #f09595;
+    }
+  }
+  body { font-family: var(--sans); background: var(--bg3); color: var(--text); min-height: 100vh; padding: 1.5rem 1rem; }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
+  h1 i { font-size: 20px; color: var(--info-text); }
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
+  .section-label { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: .75rem; }
+  .section-label i { margin-right: 5px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 13px; color: var(--text2); }
+  input, select {
+    height: 36px; padding: 0 10px; border-radius: var(--radius);
+    border: 0.5px solid var(--border2); background: var(--bg);
+    color: var(--text); font-family: var(--sans); font-size: 14px; width: 100%;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--info-text); box-shadow: 0 0 0 2px var(--info-bg); }
+  button {
+    height: 36px; padding: 0 14px; border-radius: var(--radius);
+    border: 0.5px solid var(--border2); background: transparent;
+    color: var(--text); font-family: var(--sans); font-size: 14px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  }
+  button:hover { background: var(--bg2); }
+  button:active { transform: scale(0.98); }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; }
+  .toggle-row-info span { font-size: 14px; color: var(--text); }
+  .toggle-row-info small { font-size: 12px; color: var(--text3); display: block; margin-top: 1px; }
+  .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider-t { position: absolute; cursor: pointer; inset: 0; background: var(--bg3); border-radius: 20px; border: 0.5px solid var(--border2); transition: .2s; }
+  .slider-t:before { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; bottom: 2px; background: var(--text3); border-radius: 50%; transition: .2s; }
+  input:checked + .slider-t { background: #185fa5; border-color: #185fa5; }
+  input:checked + .slider-t:before { transform: translateX(15px); background: #fff; }
+  .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; min-height: 20px; }
+  .player-row { display: flex; align-items: center; gap: 8px; background: var(--bg2); border-radius: var(--radius); padding: 8px 10px; }
+  .pname { font-size: 14px; font-weight: 500; flex: 0 0 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .puuid { font-size: 12px; color: var(--text2); flex: 1; font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player-row button { flex-shrink: 0; height: 28px; padding: 0 8px; font-size: 14px; color: var(--text3); border-color: transparent; }
+  .player-row button:hover { color: var(--danger-text); background: var(--danger-bg); border-color: transparent; }
+  .add-row { display: flex; gap: 8px; align-items: flex-end; }
+  .add-row .field { flex: 1; }
+  .add-row .field.wide { flex: 2; }
+  .tab-row { display: flex; gap: 6px; margin-bottom: .75rem; flex-wrap: wrap; }
+  .tab-btn { height: 30px; padding: 0 12px; font-size: 13px; }
+  .tab-btn.active { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); }
+  .cmd-block {
+    background: var(--bg2); border-radius: var(--radius); padding: .75rem 1rem;
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    white-space: pre-wrap; word-break: break-all; line-height: 1.65;
+    border: 0.5px solid var(--border2);
+  }
+  .cmd-actions { display: flex; gap: 8px; margin-top: .6rem; flex-wrap: wrap; align-items: center; }
+  .badge-ok { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 3px 8px; border-radius: var(--radius); background: var(--success-bg); color: var(--success-text); }
+  .empty-note { font-size: 13px; color: var(--text3); padding: 2px 0; }
+  footer { text-align: center; font-size: 12px; color: var(--text3); margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><i class="ti ti-terminal-2" aria-hidden="true"></i> GC manifest builder</h1>
+  <p style="font-size:13px;color:var(--text2);margin-top:-0.5rem;margin-bottom:0.25rem">
+    Configure team, players, and options — then copy the generated <code style="font-family:var(--mono);font-size:12px">gc_download_player.py</code> command.
+  </p>
+
+  <div class="card">
+    <div class="section-label"><i class="ti ti-users" aria-hidden="true"></i>Team config</div>
+    <div class="grid2">
+      <div class="field"><label>Team slug</label><input id="slug" type="text" placeholder="6EZBH3wGynM4" /></div>
+      <div class="field"><label>Season</label><input id="season" type="text" placeholder="2026-spring-hotshots-2k15-10u" /></div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Full team URL <span style="color:var(--text3);font-weight:400">(overrides slug + season if set)</span></label>
+      <input id="teamurl" type="text" placeholder="https://web.gc.com/teams/SLUG/SEASON" />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label"><i class="ti ti-user-circle" aria-hidden="true"></i>Player roster</div>
+    <div class="player-list" id="playerList"><div class="empty-note">No players added yet.</div></div>
+    <div class="add-row">
+      <div class="field"><label>Name</label><input id="addName" type="text" placeholder="Kassidy" /></div>
+      <div class="field wide"><label>Player UUID</label><input id="addUUID" type="text" placeholder="48483163-1262-46b7-ab00-682dfdc03ee5" /></div>
+      <button onclick="addPlayer()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label"><i class="ti ti-settings" aria-hidden="true"></i>Options</div>
+    <div class="field" style="margin-bottom:10px"><label>Output base directory</label><input id="outDir" type="text" placeholder="./gc_clips" /></div>
+    <div class="field" style="margin-bottom:12px"><label>Manifest JSON path <span style="color:var(--text3);font-weight:400">(optional)</span></label><input id="manifest" type="text" placeholder="./gc_clips/Kassidy_48483163/clips.json" /></div>
+    <div class="toggle-row">
+      <div class="toggle-row-info"><span>AI play descriptions</span><small>Claude Haiku analyzes thumbnails — slower, uses API tokens</small></div>
+      <label class="toggle" aria-label="Toggle AI descriptions"><input type="checkbox" id="aiToggle" checked><span class="slider-t"></span></label>
+    </div>
+    <div class="toggle-row" style="margin-top:2px">
+      <div class="toggle-row-info"><span>Batch mode</span><small>Generate one command per player</small></div>
+      <label class="toggle" aria-label="Toggle batch mode"><input type="checkbox" id="batchToggle"><span class="slider-t"></span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label"><i class="ti ti-terminal" aria-hidden="true"></i>Generated command</div>
+    <div class="tab-row" id="cmdTabs"></div>
+    <div class="cmd-block" id="cmdOutput">Configure team + add at least one player to generate a command.</div>
+    <div class="cmd-actions">
+      <button onclick="copyCmd()"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button>
+      <button onclick="saveConfig()"><i class="ti ti-device-floppy" aria-hidden="true"></i> Save config</button>
+      <button onclick="loadConfig()"><i class="ti ti-refresh" aria-hidden="true"></i> Load saved</button>
+      <span id="copyBadge" style="display:none" class="badge-ok"><i class="ti ti-check" aria-hidden="true"></i> Copied</span>
+    </div>
+  </div>
+  <footer>jeremiah9980/Gamechanger-automation-workflow &mdash; manifest-builder</footer>
+</div>
+
+<script>
+let players = [], activeTab = 0;
+
+function esc(s) { return String(s).replace(/"/g, '\\"'); }
+
+function addPlayer() {
+  const n = document.getElementById('addName').value.trim();
+  const u = document.getElementById('addUUID').value.trim();
+  if (!n || !u) { alert('Enter both name and UUID.'); return; }
+  players.push({ name: n, uuid: u });
+  document.getElementById('addName').value = '';
+  document.getElementById('addUUID').value = '';
+  activeTab = players.length - 1;
+  renderPlayers(); update();
+}
+
+function removePlayer(i) {
+  players.splice(i, 1);
+  if (activeTab >= players.length) activeTab = Math.max(0, players.length - 1);
+  renderPlayers(); update();
+}
+
+function renderPlayers() {
+  const el = document.getElementById('playerList');
+  if (!players.length) { el.innerHTML = '<div class="empty-note">No players added yet.</div>'; return; }
+  el.innerHTML = players.map((p, i) => `
+    <div class="player-row">
+      <span class="pname">${p.name}</span>
+      <span class="puuid">${p.uuid}</span>
+      <button onclick="removePlayer(${i})" title="Remove player"><i class="ti ti-trash" aria-hidden="true"></i></button>
+    </div>`).join('');
+}
+
+function buildCmd(p) {
+  const slug    = document.getElementById('slug').value.trim();
+  const season  = document.getElementById('season').value.trim();
+  const teamurl = document.getElementById('teamurl').value.trim();
+  const outDir  = document.getElementById('outDir').value.trim() || './gc_clips';
+  const manifest= document.getElementById('manifest').value.trim();
+  const noAI    = !document.getElementById('aiToggle').checked;
+  const safe    = p.name.replace(/[^a-zA-Z0-9]/g, '_');
+  let cmd = 'python3 gc_download_player.py \\\n';
+  if (teamurl) {
+    cmd += `  --team-url "${esc(teamurl)}" \\\n`;
+  } else if (slug && season) {
+    cmd += `  --team-url "https://web.gc.com/teams/${esc(slug)}/${esc(season)}" \\\n`;
+  }
+  cmd += `  --player-id "${esc(p.uuid)}" \\\n`;
+  cmd += `  --player-name "${esc(p.name)}" \\\n`;
+  cmd += `  --output "${esc(outDir)}/${safe}/mp4s"`;
+  if (manifest) cmd += ` \\\n  --manifest "${esc(manifest)}"`;
+  if (noAI)     cmd += ` \\\n  --no-ai`;
+  return cmd;
+}
+
+function buildBatch() {
+  if (!players.length) return '# Add players to generate batch commands.';
+  return players.map((p, i) => `# Player ${i + 1}: ${p.name}\n${buildCmd(p)}`).join('\n\n');
+}
+
+function update() {
+  const batch  = document.getElementById('batchToggle').checked;
+  const tabsEl = document.getElementById('cmdTabs');
+  const out    = document.getElementById('cmdOutput');
+  if (batch || players.length <= 1) {
+    tabsEl.innerHTML = '';
+    out.textContent = !players.length
+      ? 'Configure team + add at least one player to generate a command.'
+      : buildBatch();
+    return;
+  }
+  tabsEl.innerHTML = players.map((p, i) =>
+    `<button class="tab-btn${i === activeTab ? ' active' : ''}" onclick="setTab(${i})">${p.name}</button>`
+  ).join('');
+  out.textContent = buildCmd(players[activeTab]);
+}
+
+function setTab(i) { activeTab = i; update(); }
+
+function copyCmd() {
+  const t = document.getElementById('cmdOutput').textContent;
+  navigator.clipboard.writeText(t).then(() => {
+    const b = document.getElementById('copyBadge');
+    b.style.display = 'inline-flex';
+    setTimeout(() => b.style.display = 'none', 2000);
+  });
+}
+
+function saveConfig() {
+  const cfg = {
+    slug:     document.getElementById('slug').value,
+    season:   document.getElementById('season').value,
+    teamurl:  document.getElementById('teamurl').value,
+    outDir:   document.getElementById('outDir').value,
+    manifest: document.getElementById('manifest').value,
+    ai:       document.getElementById('aiToggle').checked,
+    players
+  };
+  localStorage.setItem('gcManifestConfig', JSON.stringify(cfg));
+  alert('Config saved to browser storage.');
+}
+
+function loadConfig() {
+  const raw = localStorage.getItem('gcManifestConfig');
+  if (!raw) { alert('No saved config found.'); return; }
+  const cfg = JSON.parse(raw);
+  document.getElementById('slug').value     = cfg.slug    || '';
+  document.getElementById('season').value   = cfg.season  || '';
+  document.getElementById('teamurl').value  = cfg.teamurl || '';
+  document.getElementById('outDir').value   = cfg.outDir  || '';
+  document.getElementById('manifest').value = cfg.manifest|| '';
+  document.getElementById('aiToggle').checked = cfg.ai !== false;
+  players = cfg.players || [];
+  activeTab = 0;
+  renderPlayers(); update();
+}
+
+['slug','season','teamurl','outDir','manifest'].forEach(id => {
+  document.getElementById(id).addEventListener('input', update);
+});
+document.getElementById('aiToggle').addEventListener('change', update);
+document.getElementById('batchToggle').addEventListener('change', update);
+document.getElementById('addUUID').addEventListener('keydown', e => { if (e.key === 'Enter') addPlayer(); });
+
+// Defaults
+document.getElementById('slug').value   = '6EZBH3wGynM4';
+document.getElementById('season').value = '2026-spring-hotshots-2k15-10u';
+players = [{ name: 'Kassidy', uuid: '48483163-1262-46b7-ab00-682dfdc03ee5' }];
+renderPlayers(); update();
+</script>
+</body>
+</html>
